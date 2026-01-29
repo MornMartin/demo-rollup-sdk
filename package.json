@@ -1,0 +1,25 @@
+{
+  "name": "hello-sdk",
+  "version": "1.0.0",
+  "main": "./index.cjs.js",
+  "module": "./index.esm.js",
+  "browser": "./index.umd.js",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "rollup": "^4.57.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "pretest": "npm run build"
+  },
+  "files": [
+    "dist"
+  ]
+}
