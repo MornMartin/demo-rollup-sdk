@@ -2,40 +2,51 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import copy from 'rollup-plugin-copy';
+import clear from 'rollup-plugin-clear';
 import pkg from './package.json' with { type: 'json' };
-import {resolve as pathResolve} from 'path';
+import { resolve as pathResolve } from 'path';
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+const copyIndexHtml = isProduction ? [] : [{ src: 'public/index.html', dest: 'dist' }];
+const clearDist = isProduction ? [clear({ targets: ['dist'] })] : [];
 
 export default [
 	// browser-friendly UMD build
 	{
 		input: 'src/main.ts',
 		output: {
-			name: 'helloSdk',
+			name: 'HelloSdk',
 			file: pathResolve('dist', pkg.browser),
 			format: 'umd'
 		},
 		plugins: [
-			resolve(),   // so Rollup can find `ms`
-			commonjs(),  // so Rollup can convert `ms` to an ES module
-			typescript() // so Rollup can convert TypeScript to JavaScript
+			...clearDist,
+			resolve(),   // so Rollup can find `xx`
+			commonjs(),  // so Rollup can convert `xx` to an ES module
+			typescript(), // so Rollup can convert TypeScript to JavaScript
 		]
 	},
-
 	// CommonJS (for Node) and ES module (for bundlers) build.
-	// (We could have three entries in the configuration array
-	// instead of two, but it's quicker to generate multiple
-	// builds from a single configuration where possible, using
-	// an array for the `output` option, where we can specify 
-	// `file` and `format` for each target)
 	{
 		input: 'src/main.ts',
 		plugins: [
 			typescript(), // so Rollup can convert TypeScript to JavaScript
 			copy({
 				targets: [
-					{ src: 'package.json', dest: 'dist' }
-				]
-			})
+					...copyIndexHtml,
+					{ src: 'package.json', dest: 'dist' },
+				],
+				copyOnce: isProduction // 确保在 watch 模式下每次构建都尝试复制
+			}),
+			{
+				name: 'watch-public',
+				buildStart() {
+					// 显式告诉 Rollup 监听此文件，变更时触发重新构建
+					this.addWatchFile(pathResolve('package.json'));
+					this.addWatchFile(pathResolve('public/index.html'));
+				}
+			},
 		],
 		output: [
 			{ file: pathResolve('dist', pkg.main), format: 'cjs' },
