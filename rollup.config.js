@@ -12,11 +12,10 @@ const copyIndexHtml = isProduction ? [] : [{ src: 'public/index.html', dest: 'di
 const clearDist = isProduction ? [clear({ targets: ['dist'] })] : [];
 
 export default [
-	// browser-friendly UMD build
 	{
 		input: 'src/main.ts',
 		output: [
-			{ // browser-friendly UMD build
+			{ // browser-friendly UMD build.
 				name: 'MetaAssistantSdk',
 				file: pathResolve('dist', pkg.browser),
 				format: 'umd'
