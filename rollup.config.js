@@ -15,22 +15,29 @@ export default [
 	// browser-friendly UMD build
 	{
 		input: 'src/main.ts',
-		output: {
-			name: 'HelloSdk',
-			file: pathResolve('dist', pkg.browser),
-			format: 'umd'
-		},
+		output: [
+			{ // browser-friendly UMD build
+				name: 'MetaAssistantSdk',
+				file: pathResolve('dist', pkg.browser),
+				format: 'umd'
+			},
+			{ // CommonJS build.
+				file: pathResolve('dist', pkg.main),
+				format: 'cjs'
+			},
+			{ // ES module build.
+				file: pathResolve('dist', pkg.module),
+				format: 'es'
+			}
+		],
 		plugins: [
 			...clearDist,
-			resolve(),   // so Rollup can find `xx`
+			resolve({
+				browser: true,
+				preferBuiltins: false,
+				mainFields: ['browser', 'module', 'main'] // 优先使用 browser 字段
+			}),   // so Rollup can find `xx`
 			commonjs(),  // so Rollup can convert `xx` to an ES module
-			typescript(), // so Rollup can convert TypeScript to JavaScript
-		]
-	},
-	// CommonJS (for Node) and ES module (for bundlers) build.
-	{
-		input: 'src/main.ts',
-		plugins: [
 			typescript(), // so Rollup can convert TypeScript to JavaScript
 			copy({
 				targets: [
@@ -47,10 +54,6 @@ export default [
 					this.addWatchFile(pathResolve('public/index.html'));
 				}
 			},
-		],
-		output: [
-			{ file: pathResolve('dist', pkg.main), format: 'cjs' },
-			{ file: pathResolve('dist', pkg.module), format: 'es' }
 		]
-	}
+	},
 ];
