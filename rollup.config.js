@@ -8,9 +8,6 @@ import { resolve as pathResolve } from 'path';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-const copyIndexHtml = isProduction ? [] : [{ src: 'public/index.html', dest: 'dist' }];
-const clearDist = isProduction ? [clear({ targets: ['dist'] })] : [];
-
 export default [
 	{
 		input: 'src/main.ts',
@@ -30,7 +27,7 @@ export default [
 			}
 		],
 		plugins: [
-			...clearDist,
+			clear({ targets: ['dist'] }),
 			resolve({
 				browser: true,
 				preferBuiltins: false,
@@ -40,7 +37,6 @@ export default [
 			typescript(), // so Rollup can convert TypeScript to JavaScript
 			copy({
 				targets: [
-					...copyIndexHtml,
 					{ src: 'package.json', dest: 'dist' },
 				],
 				copyOnce: isProduction // 确保在 watch 模式下每次构建都尝试复制
@@ -50,7 +46,6 @@ export default [
 				buildStart() {
 					// 显式告诉 Rollup 监听此文件，变更时触发重新构建
 					this.addWatchFile(pathResolve('package.json'));
-					this.addWatchFile(pathResolve('public/index.html'));
 				}
 			},
 		]
