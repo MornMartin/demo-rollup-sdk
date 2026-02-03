@@ -4,6 +4,7 @@
   "main": "./index.cjs.js",
   "module": "./index.esm.js",
   "browser": "./index.umd.js",
+  "types": "./types/index.d.ts",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-json": "^6.1.0",

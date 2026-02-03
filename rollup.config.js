@@ -10,7 +10,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 export default [
 	{
-		input: 'src/main.ts',
+		input: 'src/index.ts',
 		output: [
 			{ // browser-friendly UMD build.
 				name: 'MetaAssistantSdk',
