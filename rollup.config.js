@@ -12,18 +12,19 @@ export default [
 	{
 		input: 'src/index.ts',
 		output: [
-			{ // browser-friendly UMD build.
+			{ // browser-friendly UMD build
 				name: 'MetaAssistantSdk',
 				file: pathResolve('dist', pkg.browser),
-				format: 'umd'
+				format: 'umd',
 			},
 			{ // CommonJS build.
 				file: pathResolve('dist', pkg.main),
-				format: 'cjs'
+				format: 'cjs',
 			},
 			{ // ES module build.
 				file: pathResolve('dist', pkg.module),
-				format: 'es'
+				format: 'es',
+				sourcemap: !isProduction,
 			}
 		],
 		plugins: [
@@ -38,6 +39,7 @@ export default [
 			copy({
 				targets: [
 					{ src: 'package.json', dest: 'dist' },
+					{ src: 'README.md', dest: 'dist' }
 				],
 				copyOnce: isProduction // 确保在 watch 模式下每次构建都尝试复制
 			}),
